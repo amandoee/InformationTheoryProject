@@ -21,7 +21,7 @@ def segment_image(image : np.ndarray, bounding_boxes) -> SegmentedData:
         
         image_height, image_width, _ = image.shape
         subimage_with_coordinate_and_class=[]
-        # Now, extract each image
+        #extract each image
         for box in bounding_boxes:
 
             class_id, x_center, y_center, width, height = box
