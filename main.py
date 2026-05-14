@@ -25,7 +25,7 @@ def main(image_path: str, output_file: str):
         )
     except Exception as e:
         return -1
-    encoder = Encoder(segmented_data.list_of_subimages,bounding_boxes,(image.shape[0],image.shape[1]))
+    encoder = Encoder(segmented_data.list_of_subimages,bounding_boxes,segmented_data.semantic_description,(image.shape[0],image.shape[1]))
     encoder.encode("test")
     original_size = os.path.getsize(image_path) / 1024
     compressed_size = os.path.getsize("test") / 1024
