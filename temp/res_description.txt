@@ -1,0 +1,9 @@
+IMAGE SEMANTIC DESCRIPTION
+============================================================
+
+Original Image Size: 1024x683
+
+Description:
+Environment: urban setting 3 object(s) detected.
+
+Total Objects Extracted: 3

@@ -72,7 +72,6 @@ def main(image_path: str = "sample.jpg", output_dir: str = "output"):
     print(f"COMPRESSION: {original_size:.1f} KB → {transmitted_data:.1f} KB ({compression_ratio:.1f}:1)")
     print()
     
-    
     print("RECEIVER SIDE")
     print("-" * 80)
     
