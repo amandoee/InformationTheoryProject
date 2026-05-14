@@ -1,0 +1,29 @@
+{
+  "original_height": 668,
+  "original_width": 1002,
+  "semantic_description": "Environment: outdoor environment 3 object(s) detected.",
+  "num_subimages": 3,
+  "subimages": [
+    {
+      "class_id": 0,
+      "x_position": 396,
+      "y_position": 67,
+      "height": 551,
+      "width": 249
+    },
+    {
+      "class_id": 0,
+      "x_position": 215,
+      "y_position": 154,
+      "height": 494,
+      "width": 170
+    },
+    {
+      "class_id": 0,
+      "x_position": 660,
+      "y_position": 258,
+      "height": 339,
+      "width": 162
+    }
+  ]
+}

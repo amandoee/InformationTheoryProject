@@ -1,0 +1,9 @@
+IMAGE SEMANTIC DESCRIPTION
+============================================================
+
+Original Image Size: 1002x668
+
+Description:
+Environment: outdoor environment 3 object(s) detected.
+
+Total Objects Extracted: 3
