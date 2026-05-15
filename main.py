@@ -31,24 +31,72 @@ def compress(image_path: str, output_file: str):
     except Exception as e:
         print(str(e))
         return -1
+    
     encoder = Encoder(segmented_data.list_of_subimages,bounding_boxes,segmented_data.semantic_description,(image.shape[0],image.shape[1]))
-    encoder.encode("test")
+    encoder.encode(output_file)
+
     original_size = os.path.getsize(image_path) / 1024
     compressed_size = os.path.getsize("test") / 1024
-    print("Using our format")
     print(f"COMPRESSION: {original_size:.1f} KB → {compressed_size:.1f} KB")
 
-
-    quality = 80
-    _, encoded_img_standard = cv2.imencode('.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
-    jpeg_size_kb = len(encoded_img_standard) / 1024
-
-    print("Using JPEG format")
-
-    print(f"COMPRESSION: {original_size:.1f} KB → {jpeg_size_kb:.1f} KB")
+    return True
 
 def decompress(asset_path: str, output_file: str):
-    pass
+    
+    #implement decompressor to read compressed assets
+    #and write the assets in the desired way to the temp folder
+
+    #TODO: make decompressor do all writes in temp folder, just like manøes pipeline
+    #TODO: generate the json file in the desired format, such that it can be used by the pipeline
+    output_prefix = "temp"
+
+    # Verify transmitted data exists
+    semantic_json_path = f"{output_prefix}_semantic.json"
+    if not os.path.exists(semantic_json_path):
+        print(f"✗ {semantic_json_path} NOT FOUND")
+        return False
+    
+    # Dynamically find all subimages
+    subimage_files = sorted([
+        f for f in os.listdir(output_dir)
+        if f.startswith("subimage_") and f.endswith(".png")
+    ])
+
+    try:
+        receiver = ImageReceiver(lazy_load_model=True)
+        print("  ✓ Ready (Stable Diffusion lazy-loaded)")
+    except Exception as e:
+        print(f"  ✗ Error: {e}")
+        return False
+    
+    try:
+        receiver.reconstruct_from_subimages(
+            subimages_dir=output_dir,
+            semantic_json_path=semantic_json_path,
+            output_path=os.path.join(output_dir, "e2e_partial.png"),
+            generate_background=False
+        )
+    except Exception as e:
+        print(f"  ✗ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    
+    try:
+        full = receiver.reconstruct_from_subimages(
+            subimages_dir=output_dir,
+            semantic_json_path=semantic_json_path,
+            output_path=os.path.join(output_dir, output_file),
+            generate_background=True,
+            inference_steps=30
+        )
+    except Exception as e:
+        print(f"  ✗ Error during inpainting: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+    return True
 
 
 

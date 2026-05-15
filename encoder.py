@@ -10,7 +10,8 @@ class Encoder:
     We also encode relevant metadata for lossy image reconstruction of background
     The encoding format will be something like this:
 
-    height     | width | Number of snippets |
+    |height     | width | Number of snippets |
+    |sizeof(semantic description) |semantic description   |
     SizeOf S_0 | S_0   | bbox_0 | SizeOf S_1 | S_1 | bbox_1
     |             ...           | SizeOf S_N | S_N | bbox_N
     """

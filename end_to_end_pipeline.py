@@ -105,6 +105,10 @@ def main(image_path: str = "sample.jpg", output_dir: str = "output"):
     
     print()
     
+
+
+
+    
     # Phase 1: Partial reconstruction
     print("Step 2: Partial Reconstruction (objects only)")
     try:
