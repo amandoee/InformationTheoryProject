@@ -1,11 +1,14 @@
 import os
 import getopt, sys
 import cv2
+import shutil
 
 from pipeline import run_pipeline_simple
 from receiver import ImageReceiver
 
 from encoder import Encoder
+from decoder import Decoder
+
 
 from enum import Enum
 
@@ -43,50 +46,45 @@ def compress(image_path: str, output_file: str):
 
 def decompress(asset_path: str, output_file: str):
     
-    #implement decompressor to read compressed assets
-    #and write the assets in the desired way to the temp folder
+    decompressor = Decoder(asset_path)
 
-    #TODO: make decompressor do all writes in temp folder, just like manøes pipeline
-    #TODO: generate the json file in the desired format, such that it can be used by the pipeline
-    output_prefix = "temp"
+    tempdir = "temp"
 
+    decompressor.decompress(tempdir)
+    
     # Verify transmitted data exists
-    semantic_json_path = f"{output_prefix}_semantic.json"
+    semantic_json_path = f"{tempdir}/semantic.json"
+    print(semantic_json_path)
+    output_prefix = os.path.join(tempdir, "result")
+    print(output_prefix)
     if not os.path.exists(semantic_json_path):
         print(f"✗ {semantic_json_path} NOT FOUND")
         return False
-    
-    # Dynamically find all subimages
-    subimage_files = sorted([
-        f for f in os.listdir(output_dir)
-        if f.startswith("subimage_") and f.endswith(".png")
-    ])
 
     try:
         receiver = ImageReceiver(lazy_load_model=True)
-        print("  ✓ Ready (Stable Diffusion lazy-loaded)")
     except Exception as e:
-        print(f"  ✗ Error: {e}")
+        print(e)
         return False
     
     try:
         receiver.reconstruct_from_subimages(
-            subimages_dir=output_dir,
+            subimages_dir=tempdir,
             semantic_json_path=semantic_json_path,
-            output_path=os.path.join(output_dir, "e2e_partial.png"),
+            output_path=os.path.join(tempdir, "e2e_partial.png"),
             generate_background=False
         )
     except Exception as e:
-        print(f"  ✗ Error: {e}")
+        print(e)
         import traceback
         traceback.print_exc()
         return False
     
     try:
         full = receiver.reconstruct_from_subimages(
-            subimages_dir=output_dir,
+            subimages_dir=tempdir,
             semantic_json_path=semantic_json_path,
-            output_path=os.path.join(output_dir, output_file),
+            output_path=output_file,
             generate_background=True,
             inference_steps=30
         )
@@ -96,10 +94,11 @@ def decompress(asset_path: str, output_file: str):
         traceback.print_exc()
         return False
 
+    if os.path.exists(tempdir):
+        # This recursively deletes the folder and everything inside it
+        shutil.rmtree(tempdir)
+
     return True
-
-
-
 
 if __name__ == "__main__":
     # Parse command-line arguments
